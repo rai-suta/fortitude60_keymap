@@ -277,7 +277,8 @@ process_caps_lock(uint16_t keycode, keyrecord_t *record)
   }
 }
 
-static void process_LOWER(bool is_pressed, bool is_tapped)
+static void
+process_LOWER(bool is_pressed, bool is_tapped)
 {
   if (is_pressed) {
     layer_on(KL_LOWER);
@@ -289,7 +290,8 @@ static void process_LOWER(bool is_pressed, bool is_tapped)
   }
 }
 
-static void process_RAISE(bool is_pressed, bool is_tapped)
+static void
+process_RAISE(bool is_pressed, bool is_tapped)
 {
   if (is_pressed) {
     layer_on(KL_RAISE);
