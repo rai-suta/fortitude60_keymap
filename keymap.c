@@ -36,8 +36,8 @@ enum tap_dance_code {
   TC_SELECT,
 };
 
-#define M_DFW     DELETE_FORWARD_WORD
-#define M_DBW     DELETE_BACKWARD_WORD
+#define DEL_FW    DELETE_FORWARD_WORD
+#define DEL_BW    DELETE_BACKWARD_WORD
 
 #define MO_LOWER  MO(KL_LOWER)
 #define MO_RAISE  MO(KL_RAISE)
@@ -76,7 +76,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10, _______,
     KC_CAPS,  KC_ESC,  C_HOME,   C_END, TG_SCRL, XXXXXXX,                      REDO, TD_SLCT, KC_HOME,  KC_END, XXXXXXX, _______,
     _______, KC_PGUP,   KC_UP, KC_DOWN, KC_PGDN,  KC_DEL,                   KC_BSPC,  C_LEFT, KC_LEFT, KC_RGHT,  C_RGHT, _______,
-    _______,    UNDO,     CUT,    COPY,   PASTE, XXXXXXX, KC_QUOT, KC_QUOT, XXXXXXX,  KC_ENT,   M_DBW,   M_DFW, XXXXXXX, _______,
+    _______,    UNDO,     CUT,    COPY,   PASTE, XXXXXXX, KC_QUOT, KC_QUOT, XXXXXXX,  KC_ENT,  DEL_BW,  DEL_FW, XXXXXXX, _______,
                       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
 
