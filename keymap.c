@@ -8,12 +8,14 @@ enum keymap_layer {
   KL_RAISE,
   KL_ADJUST,
   KL_SCROLL,
+  KL_MEDIA,
 };
 
 typedef uint32_t layer_state_t;
 #define LAYER_STATE_BIT(layer)  (1UL<<layer)
 static const layer_state_t LOWER_LAYER_MASK = LAYER_STATE_BIT(KL_LOWER)
-                                            | LAYER_STATE_BIT(KL_SCROLL);
+                                            | LAYER_STATE_BIT(KL_SCROLL)
+                                            | LAYER_STATE_BIT(KL_MEDIA);
 static const layer_state_t RAISE_LAYER_MASK = LAYER_STATE_BIT(KL_RAISE);
 
 enum custom_keycodes {
@@ -42,6 +44,8 @@ enum tap_dance_code {
 #define MO_LOWER  MO(KL_LOWER)
 #define MO_RAISE  MO(KL_RAISE)
 #define TG_SCRL   TG(KL_SCROLL)
+#define TG_MEDIA  TG(KL_MEDIA)
+#define TO_LOWER  TO(KL_LOWER)
 
 #define MT_LSAS   MT(MOD_LSFT, KC_SPACE)
 #define MT_RSAS   MT(MOD_RSFT, KC_SPACE)
@@ -83,14 +87,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [KL_RAISE] = LAYOUT(
     _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10, _______,
     KC_CAPS, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC,                   KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, _______,
-    _______, XXXXXXX, XXXXXXX, XXXXXXX,    KC_F, XXXXXXX,                   XXXXXXX,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS, _______,
+    _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS, _______,
     _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  S_QUOT,  S_QUOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
                       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
 
   [KL_ADJUST] =  LAYOUT(
     _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
-    _______,   RESET, RGB_TOG, RGB_MOD, RGB_HUD, RGB_HUI,                   RGB_SAD, RGB_SAI, RGB_VAD, RGB_VAI, XXXXXXX, KC_BSPC,
+    _______,   RESET, RGB_TOG, RGB_MOD, RGB_HUD, RGB_HUI,                   RGB_SAD, RGB_SAI, RGB_VAD, RGB_VAI, XXXXXXX, _______,
     _______, XXXXXXX, XXXXXXX,   AU_ON,  AU_OFF, AG_NORM,                   AG_SWAP, XXXXXXX, BL_TOGG, BL_STEP, XXXXXXX, _______,
     _______, QWERTY,  COLEMAK,  DVORAK, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
                       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
@@ -98,9 +102,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [KL_SCROLL] =  LAYOUT(
     _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
-    _______, _______,  A_LEFT, A_RIGHT, _______, _______,                   _______, _______, _______, _______, _______, _______,
-    _______, SCRL_PU, SCRL_UP, SCRL_DN, SCRL_PD, _______,                   _______, _______, _______, _______, _______, _______,
+    _______, _______,  A_LEFT, A_RIGHT,TG_MEDIA, _______,                   _______, _______, _______, _______, _______, _______,
+    _______, SCRL_PU, SCRL_UP, SCRL_DN, SCRL_PD, _______,                   _______,  KC_INS, KC_PSCR, KC_SLCK, KC_PAUS, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+                      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+  ),
+
+  [KL_MEDIA] =  LAYOUT(
+    _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
+    _______, _______, KC_MPRV, KC_MNXT,TO_LOWER, _______,                   _______, _______, _______, _______, _______, _______,
+    _______, KC_MRWD, KC_MSTP, KC_MPLY, KC_MFFD, _______,                   _______, _______, _______, _______, _______, _______,
+    _______, KC_VOLD, KC_VOLU, KC_MUTE, KC_EJCT, _______, _______, _______, _______, _______, _______, _______, _______, _______,
                       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
 };
@@ -289,6 +301,7 @@ process_LOWER(bool is_pressed, bool is_tapped)
   else {
     layer_and(~LOWER_LAYER_MASK);
     if (is_tapped) {
+      tap_code(KC_F10);
     }
   }
 }
@@ -302,6 +315,7 @@ process_RAISE(bool is_pressed, bool is_tapped)
   else {
     layer_and(~RAISE_LAYER_MASK);
     if (is_tapped) {
+      tap_code(KC_F6);
     }
   }
 }
