@@ -43,13 +43,14 @@ enum tap_dance_code {
 #define MO_RAISE  MO(KL_RAISE)
 #define TG_SCRL   TG(KL_SCROLL)
 
-#define MT_SAS    MT(MOD_LSFT, KC_SPACE)
-#define C_TOP     C(KC_HOME)    // move to top
-#define C_BTTM    C(KC_END)     // move to bottom
-#define C_MBW     C(KC_LEFT)    // move to backward-word
-#define C_MFW     C(KC_RGHT)    // move to forward-word
-#define PREV      A(KC_LEFT)    // previous location
-#define NEXT      A(KC_RIGHT)   // next location
+#define MT_LSAS   MT(MOD_LSFT, KC_SPACE)
+#define MT_RSAS   MT(MOD_RSFT, KC_SPACE)
+#define C_HOME    C(KC_HOME)    // move to top
+#define C_END     C(KC_END)     // move to bottom
+#define C_LEFT    C(KC_LEFT)    // move to backward-word
+#define C_RGHT    C(KC_RGHT)    // move to forward-word
+#define A_LEFT    A(KC_LEFT)    // previous location
+#define A_RIGHT   A(KC_RIGHT)   // next location
 #define SCRL_UP   C(KC_UP)      // scroll line up
 #define SCRL_DN   C(KC_DOWN)    // scroll line down
 #define SCRL_PU   A(KC_PGUP)    // scroll page up
@@ -68,13 +69,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,  KC_GRV,
     KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_LCTL,
     KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B, KC_LBRC, KC_RBRC,    KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_RSFT,
-                      KC_LGUI, KC_LALT,   LOWER,  MT_SAS,  KC_SPC,  KC_SPC,  MT_SAS,   RAISE, KC_RALT, KC_RGUI
+                      KC_LGUI, KC_LALT,   LOWER, MT_LSAS,  KC_SPC,  KC_SPC, MT_RSAS,   RAISE, KC_RALT, KC_RGUI
   ),
 
   [KL_LOWER] = LAYOUT(
     _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10, _______,
-    KC_CAPS,  KC_ESC,   C_TOP,  C_BTTM, TG_SCRL, XXXXXXX,                      REDO, TD_SLCT, KC_HOME,  KC_END, XXXXXXX, _______,
-    _______, KC_PGUP,   KC_UP, KC_DOWN, KC_PGDN,  KC_DEL,                   KC_BSPC,   C_MBW, KC_LEFT, KC_RGHT,   C_MFW, _______,
+    KC_CAPS,  KC_ESC,  C_HOME,   C_END, TG_SCRL, XXXXXXX,                      REDO, TD_SLCT, KC_HOME,  KC_END, XXXXXXX, _______,
+    _______, KC_PGUP,   KC_UP, KC_DOWN, KC_PGDN,  KC_DEL,                   KC_BSPC,  C_LEFT, KC_LEFT, KC_RGHT,  C_RGHT, _______,
     _______,    UNDO,     CUT,    COPY,   PASTE, XXXXXXX, KC_QUOT, KC_QUOT, XXXXXXX,  KC_ENT,   M_DBW,   M_DFW, XXXXXXX, _______,
                       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
   ),
@@ -97,7 +98,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [KL_SCROLL] =  LAYOUT(
     _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
-    _______, _______,    PREV,    NEXT, _______, _______,                   _______, _______, _______, _______, _______, _______,
+    _______, _______,  A_LEFT, A_RIGHT, _______, _______,                   _______, _______, _______, _______, _______, _______,
     _______, SCRL_PU, SCRL_UP, SCRL_DN, SCRL_PD, _______,                   _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
                       _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
@@ -199,6 +200,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
 
 // rules.mk: TAP_DANCE_ENABLE = yes
 #ifdef TAP_DANCE_ENABLE
+#define TAP_DANCE_MOD_SFT   MOD_BIT(KC_RSFT)
 void tap_dance_select(qk_tap_dance_state_t *state, void *user_data);
 qk_tap_dance_action_t tap_dance_actions[] =  {
   [TC_SELECT] = ACTION_TAP_DANCE_FN(tap_dance_select),
@@ -208,11 +210,11 @@ void tap_dance_select(qk_tap_dance_state_t *state, void *user_data)
 {
   if (state->count == 1) {
     // switch shift mod
-    if (get_mods() & MOD_MASK_SHIFT) {
-      set_mods(get_mods() & (~MOD_MASK_SHIFT));
+    if (get_mods() & TAP_DANCE_MOD_SFT) {
+      del_mods(TAP_DANCE_MOD_SFT);
     }
     else {
-      set_mods(get_mods() | MOD_BIT(KC_LSFT));
+      add_mods(TAP_DANCE_MOD_SFT);
     }
   }
   else if (state->count == 2) {
@@ -250,7 +252,7 @@ combo_t key_combos[COMBO_COUNT] = {
 
 uint32_t layer_state_set_user(uint32_t state)
 {
-  clear_mods();
+  del_mods(TAP_DANCE_MOD_SFT);
   return update_tri_layer_state(state, KL_LOWER, KL_RAISE, KL_ADJUST);
 }
 
@@ -268,7 +270,8 @@ process_caps_lock(uint16_t keycode, keyrecord_t *record)
     case KC_ENTER:
     case KC_TAB:
     case KC_SPACE:
-    case MT_SAS:
+    case MT_LSAS:
+    case MT_RSAS:
       dprintf("caps lock off\n");
       //register_mods(MOD_MASK_SHIFT);
       tap_code(KC_CAPS);
